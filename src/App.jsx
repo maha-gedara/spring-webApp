@@ -3,11 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AssignAdd from "./pages/marketplace/AssignAdd";
 import AllAds from "./pages/marketplace/AllAdds";
 import EditAd from "./pages/marketplace/EditAd";
+import MarketplaceHeader from "./components/Marketplace/MarketplaceHeader";
 
 function App() {
 
   return (
     <Router>
+      <MarketplaceHeader />
+  
       <div>
         <Routes>
           {/* <Route path="/" element={<Home />} />
