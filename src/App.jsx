@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AssignAdd from "./pages/marketplace/AssignAdd";
-import AllAds from "./pages/marketplace/AllAdds";
-import EditAd from "./pages/marketplace/EditAd";
-import MarketplaceHeader from "./components/Marketplace/MarketplaceHeader";
-=======
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from '../src/components/Navbar';
 import Home from '../src/pages/Home';
@@ -19,35 +11,10 @@ import Marketplace from '../src/pages/Marketplace';
 import AdDetail from '../src/pages/AdDetail';
 import UserAds from '../src/pages/UserAds';
 import { AuthProvider } from '../src/services/auth';
->>>>>>> 67dca0d1b2f7e4e5e58b02a481edc4eef57fc15c
 
 function App() {
   return (
     <Router>
-<<<<<<< HEAD
-      <MarketplaceHeader />
-  
-      <div>
-        <Routes>
-          {/* <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<NotFound />} /> */}
-
-          //sanduni
-
-
-          //jithma
-
-
-          //lakshitha
-
-          <Route path="/create-ad" element={<AssignAdd />} />
-          <Route path="/all-ads" element={<AllAds />} />
-          <Route path="/edit-ad/:id" element={<EditAd />} />
-          //primal
-        </Routes>
-      </div>
-=======
       <AuthProvider>
         <div className="min-h-screen bg-gray-100">
           <Navbar />
@@ -65,7 +32,6 @@ function App() {
           </Routes>
         </div>
       </AuthProvider>
->>>>>>> 67dca0d1b2f7e4e5e58b02a481edc4eef57fc15c
     </Router>
   );
 }
