@@ -29,6 +29,9 @@ function Navbar() {
               <Link to="/my-posts" className="hover:underline">
                 My Posts
               </Link>
+              <Link to="/my-quizzes" className="hover:underline">
+                My Quizzes
+              </Link>
               <button
                 onClick={handleLogout}
                 className="hover:underline"

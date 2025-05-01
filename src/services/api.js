@@ -146,3 +146,68 @@ export const deleteComment = async (id) => {
   }
   return response.json();
 };
+
+export const createQuiz = async (formData) => {
+  const response = await fetch(`${API_URL}/quizzes`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create quiz');
+  }
+  return response.json();
+};
+
+export const getQuizzes = async () => {
+  const response = await fetch(`${API_URL}/quizzes`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch quizzes');
+  }
+  return response.json();
+};
+
+export const getQuizById = async (id) => {
+  const response = await fetch(`${API_URL}/quizzes/${id}`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch quiz');
+  }
+  return response.json();
+};
+
+export const getUserQuizzes = async () => {
+  const response = await fetch(`${API_URL}/quizzes/user`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch user quizzes');
+  }
+  return response.json();
+};
+
+export const updateQuiz = async (id, formData) => {
+  const response = await fetch(`${API_URL}/quizzes/${id}`, {
+    method: 'PUT',
+    body: formData,
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update quiz');
+  }
+  return response.json();
+};
+
+export const deleteQuiz = async (id) => {
+  const response = await fetch(`${API_URL}/quizzes/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete quiz');
+  }
+  return response.json();
+};
