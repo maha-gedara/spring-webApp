@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/auth';
 import { toggleLike } from '../services/api';
@@ -6,6 +7,7 @@ import { toast } from 'react-toastify';
 function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [currentImage, setCurrentImage] = useState(0);
 
   const handleToggleLike = async () => {
     if (!user) {
@@ -15,11 +17,23 @@ function PostCard({ post, onUpdate }) {
     try {
       await toggleLike(post.id);
       toast.success(post.liked ? 'Post unliked!' : 'Post liked!');
-      if (onUpdate) onUpdate(); // Trigger parent to refresh posts
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error('Error toggling like:', error);
       toast.error('Failed to toggle like');
     }
+  };
+
+  const hasImages = post.imageUrls && post.imageUrls.length > 0;
+
+  const nextImage = () => {
+    setCurrentImage((prev) => (prev + 1) % post.imageUrls.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImage((prev) =>
+      prev === 0 ? post.imageUrls.length - 1 : prev - 1
+    );
   };
 
   return (
@@ -30,16 +44,39 @@ function PostCard({ post, onUpdate }) {
       >
         {post.title}
       </h3>
-      {post.imageUrl && (
-        <img
-          src={post.imageUrl}
-          alt={post.title}
-          className="w-full h-48 object-cover rounded mb-2"
-        />
+
+      {hasImages && (
+        <div className="relative mb-2">
+          <img
+            src={post.imageUrls[currentImage]}
+            alt={`Slide ${currentImage + 1}`}
+            className="w-full h-48 object-cover rounded"
+          />
+          {post.imageUrls.length > 1 && (
+            <>
+              <button
+                onClick={prevImage}
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-1"
+              >
+                ‹
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-1"
+              >
+                ›
+              </button>
+            </>
+          )}
+        </div>
       )}
-      <p className="text-gray-700 mb-2">{post.content.substring(0, 100)}...</p>
+
+      <p className="text-gray-700 mb-2">
+        {post.description?.substring(0, 100)}...
+      </p>
       <p className="text-gray-500 text-sm mb-2">
-        Posted by {post.userId} on {new Date(post.createdAt).toLocaleDateString()}
+        Posted by {post.userId} on{' '}
+        {new Date(post.createdAt).toLocaleDateString()}
       </p>
       <div className="flex items-center">
         <button
