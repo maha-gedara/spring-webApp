@@ -1,27 +1,27 @@
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from '../src/components/Navbar';
+import Home from '../src/pages/Home';
+import Login from '../src/pages/Login';
+import Signup from '../src/pages/Signup';
+import PostDetail from '../src/pages/PostDetail';
+import UserPosts from '../src/pages/UserPosts';
+import { AuthProvider } from '../src/services/auth';
 
 function App() {
-
   return (
     <Router>
-      <div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<NotFound />} />
-
-          //sanduni
-
-
-          //jithma
-
-
-          //lakshitha
-
-
-          //primal
-        </Routes>
-      </div>
+      <AuthProvider>
+        <div className="min-h-screen bg-gray-100">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/posts/:id" element={<PostDetail />} />
+            <Route path="/my-posts" element={<UserPosts />} />
+          </Routes>
+        </div>
+      </AuthProvider>
     </Router>
   );
 }
