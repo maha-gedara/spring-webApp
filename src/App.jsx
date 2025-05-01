@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AssignAdd from "./pages/marketplace/AssignAdd";
 import AllAds from "./pages/marketplace/AllAdds";
+import EditAd from "./pages/marketplace/EditAd";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
 
           <Route path="/create-ad" element={<AssignAdd />} />
           <Route path="/all-ads" element={<AllAds />} />
+          <Route path="/edit-ad/:id" element={<EditAd />} />
           //primal
         </Routes>
       </div>
