@@ -24,6 +24,9 @@ function Navbar() {
           Skillverse
         </Link>
         <div className="space-x-4">
+          <Link to="/marketplace" className="hover:underline">
+            Marketplace
+          </Link>
           {user ? (
             <>
               <Link to="/my-posts" className="hover:underline">
@@ -31,6 +34,9 @@ function Navbar() {
               </Link>
               <Link to="/my-quizzes" className="hover:underline">
                 My Quizzes
+              </Link>
+              <Link to="/my-ads" className="hover:underline">
+                My Ads
               </Link>
               <button
                 onClick={handleLogout}
