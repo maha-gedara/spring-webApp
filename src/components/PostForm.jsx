@@ -39,7 +39,7 @@ function PostForm({ onSubmit, initialData = {}, isEditing = false }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="title" className="block text-sm font-medium text-white">
           Title
         </label>
         <input
