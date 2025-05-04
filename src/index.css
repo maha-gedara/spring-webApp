@@ -1,9 +1,9 @@
 @import "tailwindcss";
 /* input.css */
-/* @tailwind base;
-@tailwind components; */
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
-
+/* 
 @import "tailwindcss/preflight";
 @import "tailwindcss/utilities";
-@import "tailwindcss/components";
+@import "tailwindcss/components"; */

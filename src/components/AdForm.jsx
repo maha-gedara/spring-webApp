@@ -51,10 +51,16 @@ function AdForm({ onSubmit, initialData = {}, isEditing = false }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-bold">{isEditing ? 'Edit Ad' : 'Create Ad'}</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5 bg-gray-900 bg-opacity-80 text-white p-6 rounded-2xl shadow-md backdrop-blur-md border border-indigo-500 mt-6"
+    >
+      <h2 className="text-2xl font-bold">
+        {isEditing ? 'Edit Ad' : 'Create Ad'}
+      </h2>
+
       <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="category" className="block text-sm font-medium mb-1">
           Category
         </label>
         <input
@@ -63,11 +69,12 @@ function AdForm({ onSubmit, initialData = {}, isEditing = false }) {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="w-full px-3 py-2 rounded-md bg-gray-800 border border-indigo-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
         />
       </div>
+
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="title" className="block text-sm font-medium mb-1">
           Title
         </label>
         <input
@@ -76,11 +83,12 @@ function AdForm({ onSubmit, initialData = {}, isEditing = false }) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="w-full px-3 py-2 rounded-md bg-gray-800 border border-indigo-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
         />
       </div>
+
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="description" className="block text-sm font-medium mb-1">
           Description
         </label>
         <textarea
@@ -89,11 +97,12 @@ function AdForm({ onSubmit, initialData = {}, isEditing = false }) {
           onChange={(e) => setDescription(e.target.value)}
           required
           rows="4"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="w-full px-3 py-2 rounded-md bg-gray-800 border border-indigo-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
         />
       </div>
+
       <div>
-        <label htmlFor="images" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="images" className="block text-sm font-medium mb-1">
           Images (up to 3)
         </label>
         <input
@@ -102,23 +111,29 @@ function AdForm({ onSubmit, initialData = {}, isEditing = false }) {
           accept="image/*"
           multiple
           onChange={handleImageChange}
-          className="mt-1 block w-full"
+          className="block w-full text-sm text-white bg-gray-800 rounded-md border border-indigo-500 file:bg-indigo-600 file:border-none file:rounded file:px-3 file:py-1 file:text-white hover:file:bg-indigo-500"
         />
         {initialData.imageUrls && isEditing && (
-          <div className="mt-2">
-            <p className="text-sm text-gray-600">Existing Images:</p>
-            <div className="flex space-x-2">
+          <div className="mt-3">
+            <p className="text-sm text-gray-400 mb-2">Existing Images:</p>
+            <div className="flex space-x-3">
               {initialData.imageUrls.map((url, index) => (
-                <img key={index} src={url} alt={`Ad ${index}`} className="w-20 h-20 object-cover rounded" />
+                <img
+                  key={index}
+                  src={url}
+                  alt={`Ad ${index}`}
+                  className="w-20 h-20 object-cover rounded-md border border-indigo-500 shadow"
+                />
               ))}
             </div>
           </div>
         )}
       </div>
+
       <button
         type="submit"
         disabled={loading || !user}
-        className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
+        className="w-full bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? 'Processing...' : isEditing ? 'Update Ad' : 'Create Ad'}
       </button>
