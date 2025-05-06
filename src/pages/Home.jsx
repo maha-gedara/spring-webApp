@@ -146,7 +146,7 @@ function Home() {
         <div className={`transition-all duration-500 ${isFormOpen ? 'filter blur-sm' : ''}`}>
           {posts.length === 0 ? (
             <div className="bg-gray-800 bg-opacity-40 rounded-lg p-8 text-center backdrop-blur-sm border border-gray-700">
-              <p className="text-gray-300">No cosmic posts discovered yet. Create the first one!</p>
+              <p className="text-gray-300">No posts discovered yet. Create the first one!</p>
               <button
                 onClick={openForm}
                 className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"
