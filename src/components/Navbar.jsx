@@ -1,21 +1,9 @@
 import { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../services/auth';
-import { toast } from 'react-toastify';
 
 function Navbar() {
-  const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success('Logged out successfully');
-    } catch (error) {
-      console.error('Error logging out:', error);
-      toast.error('Failed to log out');
-    }
-  };
+  const { user } = useContext(AuthContext);
 
   return (
     <nav className="bg-gradient-to-r from-indigo-900 via-purple-900 to-blue-900 text-white p-6 shadow-lg">
@@ -28,36 +16,43 @@ function Navbar() {
             {user ? (
               <div className="flex space-x-6">
                 <Link
-                  to="/my-posts"
+                  to="/"
                   className="hover:text-yellow-300 transition-colors duration-300 font-bold"
                 >
-                  My Posts
+                  Posts
                 </Link>
                 <Link
                   to="/my-quizzes"
                   className="hover:text-yellow-300 transition-colors duration-300 font-bold"
                 >
-                  My Quizzes
+                  Quizzes
                 </Link>
-                <button
-                  onClick={handleLogout}
+                <Link
+                  to="/marketplace"
                   className="hover:text-yellow-300 transition-colors duration-300 font-bold"
                 >
-                  Logout
-                </button>
+                  Market Place
+                </Link>
+                <Link
+                  to="/profile"
+                  className="hover:text-purple-300 transition-colors duration-300"
+                >
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </Link>
               </div>
             ) : (
-            <div className="space-x-6">
-              <Link to="/login" className="hover:text-yellow-300 transition-colors duration-200">
-                Login
-              </Link>
-              <Link to="/signup" className="hover:text-yellow-300 transition-colors duration-200">
-                Signup
-              </Link>
-            </div>
-          )}
+              <div className="space-x-6">
+                <Link to="/login" className="hover:text-yellow-300 transition-colors duration-200">
+                  Login
+                </Link>
+                <Link to="/signup" className="hover:text-yellow-300 transition-colors duration-200">
+                  Signup
+                </Link>
+              </div>
+            )}
           </div>
-          
         </div>
       </div>
     </nav>
