@@ -39,8 +39,9 @@ function PostCard({ post, onUpdate }) {
       )}
       <p className="text-white/80 mb-2">{post.content.substring(0, 100)}...</p>
       <p className="text-white/60 text-sm mb-2">
-        Posted by {post.userId} on {new Date(post.createdAt).toLocaleDateString()}
-      </p>
+          Posted by {post.userId.split('@')[0]} on {new Date(post.createdAt).toLocaleDateString()}
+        </p>
+
       <div className="flex items-center">
         <button
           onClick={handleToggleLike}
