@@ -30,7 +30,7 @@ function PostCard({ post, onUpdate }) {
   };
 
   return (
-    <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-5 shadow-xl transition-all duration-300 hover:bg-white/15 hover:shadow-2xl group mb-4">
+    <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-5 shadow-xl transition-all duration-300 hover:bg-white/15 hover:shadow-2xl group mb-4 max-w-xl w-full mx-auto">
       <h3
         className="text-xl font-semibold mb-2 cursor-pointer hover:underline text-white"
         onClick={() => navigate(`/posts/${post.id}`)}
@@ -41,7 +41,7 @@ function PostCard({ post, onUpdate }) {
         <img
           src={post.imageUrl}
           alt={post.title}
-          className="w-full h-48 object-cover rounded mb-2"
+          className="w-full h-64 object-cover rounded-lg mb-2"
         />
       )}
       <p className="text-white/80 mb-2">{post.content.substring(0, 100)}...</p>
