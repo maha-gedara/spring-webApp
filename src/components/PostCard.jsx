@@ -4,7 +4,7 @@ import { useAuth } from '../services/auth';
 import { toggleLike } from '../services/api';
 import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart, FaComment } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { getCommentsByPostId } from '../services/api';
 
 function PostCard({ post, onUpdate }) {
