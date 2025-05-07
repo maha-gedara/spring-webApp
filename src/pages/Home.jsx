@@ -72,13 +72,13 @@ function Home() {
     setIsFormOpen(false);
   };
 
+  // Base universe background with simplified gradient
   const universeBackground = "bg-gradient-to-br from-gray-900 to-blue-900 bg-fixed";
-  
 
   if (loading) {
     return (
       <div className={`flex items-center justify-center h-screen ${universeBackground}`}>
-        <div className="text-center animate-pulse">
+        <div className="text-center">
           <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin mx-auto"></div>
           <p className="mt-4 text-white text-lg font-semibold">Loading the cosmos...</p>
         </div>
@@ -87,15 +87,25 @@ function Home() {
   }
 
   return (
-    <div className={`min-h-screen ${universeBackground} transition-all duration-300`}>
-      {/* Main content */}
-      <div className="max-w-4xl mx-auto pt-8 px-4 pb-16 transition-all duration-500 relative">
+    <div className={`min-h-screen ${universeBackground} transition-all duration-300 relative`}>
+      {/* Optimized space background - fewer elements with will-change */}
+      <div className="space-background fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        {/* Static or reduced stars instead of animated ones */}
+        <div className="stars-layer"></div>
+        
+        {/* Just two nebulas instead of many animated effects */}
+        <div className="nebula-primary"></div>
+        <div className="nebula-secondary"></div>
+      </div>
+      
+      {/* Main content with z-index to be above the background */}
+      <div className="max-w-4xl mx-auto pt-8 px-4 pb-16 relative z-10">
         {/* Top-Right Buttons */}
         <div className="fixed top-4 right-6 flex space-x-3 z-40">
           {/* Create Post Button */}
           <button
             onClick={openForm}
-            className="bg-blue-600 bg-opacity-90 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 transform hover:scale-105"
+            className="bg-blue-600 bg-opacity-90 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
             title="Create Post"
             aria-label="Create a new post"
           >
@@ -110,17 +120,17 @@ function Home() {
               SkillVerse
             </span>
           </h1>
-          <p className="mt-2 text-blue-100 text-xl dark:text-blue-200">
+          <p className="mt-2 text-blue-100 text-xl">
             Build skills. Shape your future
           </p>
 
           {/* Create Post Form Popup - Centered with fixed position */}
           {isFormOpen && (
-            <div className="absolute top-full left-0 right-0 z-50 mt-5 px-4 flex items-center justify-center">
+            <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
               {/* Semi-transparent overlay */}
-              <div className="fixed inset-0 bg-opacity-30" onClick={closeForm}></div>
+              <div className="fixed inset-0 bg-black bg-opacity-50" onClick={closeForm}></div>
               
-              {/* Form Content - Centered Popup */}
+              {/* Form Content */}
               <div className="relative bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl p-6 w-full max-w-md shadow-2xl z-10 animate-popup border border-gray-700">
                 <div className="mb-4">
                   <h2 className="text-lg font-semibold text-white">
@@ -157,7 +167,7 @@ function Home() {
           ) : (
             <div className="space-y-6">
               {posts.map((post) => (
-                <div key={post.id} className="transform transition-all duration-300 hover:scale-[1.02]">
+                <div key={post.id} className="transform transition-all duration-300 hover:scale-105">
                   <PostCard post={post} onUpdate={handleUpdatePosts} />
                 </div>
               ))}
@@ -166,21 +176,85 @@ function Home() {
         </div>
       </div>
 
-      {/* Popup Animation and Floating Effect */}
-      <style jsx>{`
+      {/* Optimized CSS for star animation - reduces number of elements and uses efficient CSS */}
+      <style jsx global>{`
+        /* Use transform for better performance */
+        .space-background {
+          will-change: transform;
+          transform: translateZ(0); /* Hardware acceleration */
+          backface-visibility: hidden;
+        }
+        
+        /* Single stars layer with reduced complexity */
+        .stars-layer {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-image: 
+            radial-gradient(1px 1px at 50px 150px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 150px 50px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 250px 250px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 350px 150px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 450px 50px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 550px 250px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 650px 150px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 750px 50px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 850px 250px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 950px 150px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 1050px 50px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 1150px 250px, white, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 100px 100px, white, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 300px 300px, white, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 500px 500px, white, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 700px 300px, white, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 900px 200px, white, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 1100px 300px, white, rgba(0,0,0,0));
+          background-size: 1200px 600px;
+          background-repeat: repeat;
+          opacity: 0.6;
+          /* Reduced animation speed */
+          animation: starMove 300s linear infinite;
+        }
+
+        /* Simplified nebula effects - using static positioning and reduced opacity */
+        .nebula-primary {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(ellipse at 20% 35%, rgba(76, 0, 255, 0.08) 0%, transparent 30%),
+                    radial-gradient(ellipse at 75% 60%, rgba(0, 153, 255, 0.06) 0%, transparent 40%);
+          pointer-events: none;
+          opacity: 0.7;
+        }
+
+        .nebula-secondary {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(ellipse at 80% 10%, rgba(255, 100, 200, 0.05) 0%, transparent 40%);
+          pointer-events: none;
+          opacity: 0.6;
+        }
+
+        /* Reduced animation keyframes */
+        @keyframes starMove {
+          from { background-position: 0 0; }
+          to { background-position: -1200px 600px; }
+        }
+
         @keyframes popup {
-          0% { transform: scale(0.7); opacity: 0; }
+          0% { transform: scale(0.9); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
         }
+
         .animate-popup {
           animation: popup 0.3s ease-out;
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
         }
       `}</style>
     </div>
