@@ -47,21 +47,25 @@ function Marketplace() {
               Marketplace
             </span>
           </h2>
-          <div className="space-x-4">
-            <button
-              onClick={() => navigate('/marketplace/create')}
-              className="bg-blue-600 bg-opacity-90 hover:bg-blue-700 text-white px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
-            >
-              <FaPlus />
-              <span>Create Ad</span>
-            </button>
-            <button
-              onClick={() => navigate('/my-ads')}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-full shadow backdrop-blur-sm transition-all duration-300 transform hover:scale-105"
-            >
-              My Ads
-            </button>
-          </div>
+          <div className="flex flex-row-reverse gap-4">
+  {/* Create Ad Button */}
+  <button
+    onClick={() => navigate('/marketplace/create')}
+    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+  >
+    <FaPlus />
+    <span>Create Ad</span>
+  </button>
+
+  {/* My Ads Button */}
+  <button
+    onClick={() => navigate('/my-ads')}
+    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+  >
+    <FaRocket />
+    <span>My Ads</span>
+  </button>
+</div>
         </div>
 
         {ads.length === 0 ? (
