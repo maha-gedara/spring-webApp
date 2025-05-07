@@ -1,34 +1,46 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../services/auth';
 
-function QuizForm({ onSubmit, initialData = {}, isEditing = false }) {
-  const [title, setTitle] = useState(initialData.title || '');
-  const [category, setCategory] = useState(initialData.category || '');
-  const [description, setDescription] = useState(initialData.description || '');
-  const [time, setTime] = useState(initialData.time || '');
-  const [link, setLink] = useState(initialData.link || '');
+function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [time, setTime] = useState('');
+  const [link, setLink] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    setTitle(initialData.title || '');
+    setCategory(initialData.category || '');
+    setDescription(initialData.description || '');
+    setTime(initialData.time || '');
+    setLink(initialData.link || '');
+  }, [initialData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      toast.error('Please log in to create a quiz');
+      toast.error('Please log in to create or edit a quiz');
       return;
     }
+
+    const formData = {
+      title,
+      category,
+      description,
+      time,
+      link,
+      userId: user.email,
+      createdAt: isEditing ? initialData.createdAt : new Date().toISOString(),
+    };
+
     setLoading(true);
-
     try {
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('category', category);
-      formData.append('description', description);
-      formData.append('time', time);
-      formData.append('link', link);
-
-      await onSubmit(formData, isEditing ? initialData.id : null);
+      await onSubmit(formData);
       toast.success(isEditing ? 'Quiz updated!' : 'Quiz created!');
+
       if (!isEditing) {
         setTitle('');
         setCategory('');
@@ -37,7 +49,7 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false }) {
         setLink('');
       }
     } catch (error) {
-      console.error('Error submitting quiz:', error.response?.data || error.message);
+      console.error('Error submitting quiz:', error);
       toast.error(isEditing ? 'Failed to update quiz' : 'Failed to create quiz');
     } finally {
       setLoading(false);
@@ -45,82 +57,98 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-bold">{isEditing ? 'Edit Quiz' : 'Create Quiz'}</h2>
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-          Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-          Category
-        </label>
-        <input
-          type="text"
-          id="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-          Description
-        </label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          rows="4"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-      <div>
-        <label htmlFor="time" className="block text-sm font-medium text-gray-700">
-          Time (minutes)
-        </label>
-        <input
-          type="number"
-          id="time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          required
-          min="1"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-      <div>
-        <label htmlFor="link" className="block text-sm font-medium text-gray-700">
-          Quiz Link
-        </label>
-        <input
-          type="url"
-          id="link"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-      <button
-        type="submit"
-        disabled={loading || !user}
-        className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
-      >
-        {loading ? 'Processing...' : isEditing ? 'Update Quiz' : 'Create Quiz'}
-      </button>
-    </form>
+    <div className="flex justify-center items-center box-border overflow-hidden">
+      <form onSubmit={handleSubmit} className="w-full max-w-3xl overflow-y-auto bg-white p-8 rounded-lg shadow-lg backdrop-blur-lg border border-white/20">
+        <h2 className="text-3xl font-extrabold mb-4 bg-gradient-to-r from-pink-500 to-indigo-500 bg-clip-text text-transparent text-center">
+          {isEditing ? 'Edit Quiz' : 'Create Quiz'}
+        </h2>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="title" className="font-semibold text-sm mb-2 block">Title</label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Quiz Title"
+              required
+              className="w-full p-2 rounded-lg border border-gray-300 mb-4 bg-opacity-80"
+            />
+          </div>
+          <div>
+            <label htmlFor="category" className="font-semibold text-sm mb-2 block">Category</label>
+            <input
+              type="text"
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="e.g. Science"
+              required
+              className="w-full p-2 rounded-lg border border-gray-300 mb-4 bg-opacity-80"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="description" className="font-semibold text-sm mb-2 block">Description</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="What is this quiz about?"
+            required
+            className="w-full p-2 rounded-lg border border-gray-300 mb-4 bg-opacity-80 resize-y min-h-[6rem]"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="time" className="font-semibold text-sm mb-2 block">Time (minutes)</label>
+            <input
+              type="number"
+              id="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              min="1"
+              placeholder="Duration"
+              required
+              className="w-full p-2 rounded-lg border border-gray-300 mb-4 bg-opacity-80"
+            />
+          </div>
+          <div>
+            <label htmlFor="link" className="font-semibold text-sm mb-2 block">Quiz Link</label>
+            <input
+              type="url"
+              id="link"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder="https://example.com"
+              required
+              className="w-full p-2 rounded-lg border border-gray-300 mb-4 bg-opacity-80"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading || !user}
+          className={`w-full py-3 rounded-lg font-semibold ${loading || !user ? 'bg-purple-200 cursor-not-allowed' : 'bg-purple-700 text-white'} mt-4`}
+        >
+          {loading ? 'Processing...' : isEditing ? 'Update Quiz' : 'Create Quiz'}
+        </button>
+
+        {isEditing && onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-full mt-2 py-3 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+        )}
+      </form>
+    </div>
   );
 }
 

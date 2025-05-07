@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../services/auth';
@@ -43,24 +43,18 @@ function QuizDetail() {
 
   const handleUpdateQuiz = async (formData) => {
     try {
-      const response = await updateQuiz(id, formData);
-      setQuiz(response.quiz);
+      const updatedQuiz = await updateQuiz(id, formData);
+      setQuiz(updatedQuiz);
       setIsEditing(false);
       toast.success('Quiz updated successfully');
     } catch (error) {
       console.error('Error updating quiz:', error);
       toast.error('Failed to update quiz');
-      throw error;
     }
   };
 
-  if (loading) {
-    return <div className="text-center mt-8">Loading...</div>;
-  }
-
-  if (!quiz) {
-    return <div className="text-center mt-8">Quiz not found</div>;
-  }
+  if (loading) return <div className="text-center mt-8">Loading...</div>;
+  if (!quiz) return <div className="text-center mt-8">Quiz not found</div>;
 
   return (
     <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-lg shadow">
@@ -69,6 +63,7 @@ function QuizDetail() {
           onSubmit={handleUpdateQuiz}
           initialData={quiz}
           isEditing={true}
+          onCancel={() => setIsEditing(false)}
         />
       ) : (
         <>
@@ -87,18 +82,8 @@ function QuizDetail() {
           </p>
           {user && user.email === quiz.userId && (
             <div className="flex space-x-4 mb-4">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="text-blue-500 hover:underline"
-              >
-                Edit Quiz
-              </button>
-              <button
-                onClick={handleDeleteQuiz}
-                className="text-red-500 hover:underline"
-              >
-                Delete Quiz
-              </button>
+              <button onClick={() => setIsEditing(true)} className="text-purple-500 hover:underline">Edit Quiz</button>
+              <button onClick={handleDeleteQuiz} className="text-purple-500 hover:underline">Delete Quiz</button>
             </div>
           )}
         </>
