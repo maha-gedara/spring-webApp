@@ -7,34 +7,37 @@ function AdCard({ ad }) {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState({});
 
-  // Handle image error
   const handleImageError = (index) => {
     setImageError(prev => ({ ...prev, [index]: true }));
     console.error(`Failed to load image at index ${index}:`, ad.imageUrls[index]);
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-4">
+    <div className="bg-gray-900 bg-opacity-80 border border-indigo-500 text-white rounded-xl p-5 shadow-lg backdrop-blur-sm hover:shadow-indigo-500/40 transition duration-300">
       <h3
-        className="text-xl font-semibold mb-2 cursor-pointer hover:underline"
+        className="text-2xl font-semibold mb-2 cursor-pointer hover:text-indigo-400 transition"
         onClick={() => navigate(`/marketplace/${ad.id}`)}
       >
         {ad.title}
       </h3>
-      <p className="text-gray-700 mb-2"><strong>Category:</strong> {ad.category}</p>
-      <p className="text-gray-700 mb-2">
-        {ad.description.length > 100 ? `${ad.description.substring(0, 100)}...` : ad.description}
-      </p>
       
+      <p className="text-gray-300 mb-1"><strong>Category:</strong> {ad.category}</p>
+      
+      <p className="text-gray-400 mb-3">
+        {ad.description.length > 100
+          ? `${ad.description.substring(0, 100)}...`
+          : ad.description}
+      </p>
+
       {ad.imageUrls && ad.imageUrls.length > 0 && (
-        <div className="flex space-x-2 mb-2 overflow-x-auto">
+        <div className="flex space-x-3 overflow-x-auto mb-3">
           {ad.imageUrls.map((url, index) => (
             !imageError[index] ? (
-              <img 
-                key={index} 
-                src={url} 
-                alt={`Ad ${index}`} 
-                className="w-20 h-20 object-cover rounded" 
+              <img
+                key={index}
+                src={url}
+                alt={`Ad ${index}`}
+                className="w-24 h-24 object-cover rounded-md shadow-md hover:scale-105 transition"
                 onError={() => handleImageError(index)}
                 loading="lazy"
               />
@@ -42,22 +45,22 @@ function AdCard({ ad }) {
           ))}
         </div>
       )}
-      
-      <p className="text-gray-500 text-sm mb-2">
+
+      <p className="text-gray-500 text-sm mb-3">
         Posted by {ad.userId} on {new Date(ad.createdAt).toLocaleDateString()}
       </p>
-      
+
       {user && user.email === ad.userId && (
         <div className="flex space-x-4">
           <button
             onClick={() => navigate(`/marketplace/edit/${ad.id}`)}
-            className="text-blue-500 hover:underline"
+            className="bg-blue-600 text-white px-4 py-1 rounded-full hover:bg-blue-700 transition"
           >
             Edit
           </button>
           <button
             onClick={() => navigate(`/marketplace/${ad.id}`)}
-            className="text-red-500 hover:underline"
+            className="bg-red-600 text-white px-4 py-1 rounded-full hover:bg-red-700 transition"
           >
             Delete
           </button>

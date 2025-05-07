@@ -7,8 +7,12 @@ import PostDetail from '../src/pages/PostDetail';
 import UserPosts from '../src/pages/UserPosts';
 import QuizDetail from '../src/pages/QuizDetail';
 import UserQuizzes from '../src/pages/UserQuizzes';
+import Marketplace from '../src/pages/Marketplace';
+import AdDetail from '../src/pages/AdDetail';
+import UserAds from '../src/pages/UserAds';
 import Profile from './components/Profile';
 import { AuthProvider } from '../src/services/auth';
+
 
 function App() {
   return (
@@ -24,7 +28,11 @@ function App() {
             <Route path="/my-posts" element={<UserPosts />} />
             <Route path="/quizzes/:id" element={<QuizDetail />} />
             <Route path="/my-quizzes" element={<UserQuizzes />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/marketplace/:id" element={<AdDetail />} />
+            <Route path="/my-ads" element={<UserAds />} />
             <Route path="/profile" element={<Profile />} />
+            
           </Routes>
         </div>
       </AuthProvider>
