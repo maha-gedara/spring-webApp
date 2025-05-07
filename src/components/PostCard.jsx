@@ -3,102 +3,104 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/auth';
 import { toggleLike } from '../services/api';
 import { toast } from 'react-toastify';
+import { FaHeart, FaRegHeart, FaComment } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { getCommentsByPostId } from '../services/api';
 
 function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [currentImage, setCurrentImage] = useState(0);
+  const [isLiking, setIsLiking] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+
+  // Fetch comment count for this post
+  useEffect(() => {
+    const fetchCommentCount = async () => {
+      try {
+        const comments = await getCommentsByPostId(post.id);
+        setCommentCount(comments.length);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+        // Silently fail - we don't want to show an error toast for this
+      }
+    };
+    
+    fetchCommentCount();
+  }, [post.id]);
 
   const handleToggleLike = async () => {
     if (!user) {
       toast.error('Please log in to like posts');
       return;
     }
+   
     try {
+      setIsLiking(true);
       await toggleLike(post.id);
       toast.success(post.liked ? 'Post unliked!' : 'Post liked!');
       if (onUpdate) onUpdate();
+      setTimeout(() => setIsLiking(false), 300); // Reset animation after transition
     } catch (error) {
       console.error('Error toggling like:', error);
       toast.error('Failed to toggle like');
+      setIsLiking(false);
     }
   };
-
-  const hasImages = post.imageUrls && post.imageUrls.length > 0;
-
-  const nextImage = () => {
-    setCurrentImage((prev) => (prev + 1) % post.imageUrls.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImage((prev) =>
-      prev === 0 ? post.imageUrls.length - 1 : prev - 1
-    );
-  };
-
+  
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-4">
+    <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-5 shadow-xl transition-all duration-300 hover:bg-white/15 hover:shadow-2xl group mb-4 max-w-xl w-full mx-auto">
       <h3
-        className="text-xl font-semibold mb-2 cursor-pointer hover:underline"
+        className="text-xl font-semibold mb-2 cursor-pointer hover:underline text-white"
         onClick={() => navigate(`/posts/${post.id}`)}
       >
         {post.title}
       </h3>
-
-      {hasImages && (
-        <div className="relative mb-2">
-          <img
-            src={post.imageUrls[currentImage]}
-            alt={`Slide ${currentImage + 1}`}
-            className="w-full h-48 object-cover rounded"
-          />
-          {post.imageUrls.length > 1 && (
-            <>
-              <button
-                onClick={prevImage}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-1"
-              >
-                ‹
-              </button>
-              <button
-                onClick={nextImage}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-1"
-              >
-                ›
-              </button>
-            </>
-          )}
-        </div>
+      {post.imageUrl && (
+        <img
+          src={post.imageUrl}
+          alt={post.title}
+          className="w-full h-64 object-cover rounded-lg mb-2"
+        />
       )}
-
-      <p className="text-gray-700 mb-2">
-        {post.description?.substring(0, 100)}...
+      <p className="text-white/80 mb-2">{post.content.substring(0, 100)}...</p>
+      <p className="text-white/60 text-sm mb-2">
+        Posted by {post.userId.split('@')[0]} on {new Date(post.createdAt).toLocaleDateString()}
       </p>
-      <p className="text-gray-500 text-sm mb-2">
-        Posted by {post.userId} on{' '}
-        {new Date(post.createdAt).toLocaleDateString()}
-      </p>
-      <div className="flex items-center">
+      <div className="flex items-center space-x-4">
         <button
           onClick={handleToggleLike}
-          className="flex items-center text-gray-600 hover:text-blue-500"
+          className="flex items-center gap-2 transition-all duration-200 focus:outline-none"
         >
-          <svg
-            className="w-5 h-5 mr-1"
-            fill={post.liked ? 'currentColor' : 'none'}
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-            />
-          </svg>
-          {post.likeCount} Likes
+          <div className="transform transition-transform active:scale-125 duration-200">
+            {post.liked ? (
+                              <FaHeart
+                className="w-6 h-6 text-pink-500 fill-current transition-all duration-300 ease-in-out"
+                style={{ transform: isLiking ? 'scale(1.2)' : 'scale(1)', color: '#ec4899' }}
+              />
+            ) : (
+              <FaRegHeart
+                className="w-6 h-6 text-pink-500 transition-all duration-300 ease-in-out"
+                style={{ transform: isLiking ? 'scale(1.2)' : 'scale(1)' }}
+              />
+            )}
+          </div>
+          <span className="text-sm font-medium text-pink-500">
+            {post.likeCount}
+          </span>
+        </button>
+       
+        <button
+          onClick={() => navigate(`/posts/${post.id}`)}
+          className="flex items-center gap-2 px-2 py-1 transition-all duration-300 text-blue-300 hover:text-blue-400 hover:bg-white/10 rounded-full"
+        >
+          <FaComment className="w-5 h-5" />
+          <span className="text-sm font-medium">
+            {commentCount}
+          </span>
         </button>
       </div>
+     
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
     </div>
   );
 }
