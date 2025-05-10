@@ -223,3 +223,68 @@ export const deleteQuiz = async (id) => {
   }
   return response.json();
 };
+
+export const createAd = async (formData) => {
+  const response = await fetch(`${API_URL}/marketplace`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create ad');
+  }
+  return response.json();
+};
+
+export const getAds = async () => {
+  const response = await fetch(`${API_URL}/marketplace`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch ads');
+  }
+  return response.json();
+};
+
+export const getAdById = async (id) => {
+  const response = await fetch(`${API_URL}/marketplace/${id}`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch ad');
+  }
+  return response.json();
+};
+
+export const getUserAds = async () => {
+  const response = await fetch(`${API_URL}/marketplace/user`, {
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch user ads');
+  }
+  return response.json();
+};
+
+export const updateAd = async (id, formData) => {
+  const response = await fetch(`${API_URL}/marketplace/${id}`, {
+    method: 'PUT',
+    body: formData,
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update ad');
+  }
+  return response.json();
+};
+
+export const deleteAd = async (id) => {
+  const response = await fetch(`${API_URL}/marketplace/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete ad');
+  }
+  return response.json();
+};

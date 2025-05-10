@@ -1,9 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../services/auth';
-import { getPostById, deletePost, toggleLike, createComment, getCommentsByPostId, updateComment, deleteComment } from '../services/api';
+import { getPostById, deletePost, toggleLike, createComment, getCommentsByPostId, updateComment, deleteComment, updatePost } from '../services/api';
 import CommentForm from '../components/CommentForm';
+import PostForm from '../components/PostForm';
+import { Heart, Edit2, Trash, MessageCircle } from 'lucide-react';
 
 function PostDetail() {
   const { id } = useParams();
@@ -13,6 +15,26 @@ function PostDetail() {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingComment, setEditingComment] = useState(null);
+  const [isEditingPost, setIsEditingPost] = useState(false);
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const commentFormRef = useRef(null);
+
+  // Handle clicks outside of comment form
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (commentFormRef.current && !commentFormRef.current.contains(event.target)) {
+        setShowCommentForm(false);
+      }
+    }
+
+    // Add event listener if comment form is shown
+    if (showCommentForm) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCommentForm]);
 
   useEffect(() => {
     const fetchPostAndComments = async () => {
@@ -60,7 +82,11 @@ function PostDetail() {
     try {
       const response = await createComment(formData);
       setComments([...comments, response.comment]);
+      setShowCommentForm(false);
+      toast.success('Comment added successfully');
     } catch (error) {
+      console.error('Error creating comment:', error);
+      toast.error('Failed to add comment');
       throw error;
     }
   };
@@ -70,7 +96,10 @@ function PostDetail() {
       const response = await updateComment(commentId, formData);
       setComments(comments.map((c) => (c.id === commentId ? response.comment : c)));
       setEditingComment(null);
+      toast.success('Comment updated successfully');
     } catch (error) {
+      console.error('Error updating comment:', error);
+      toast.error('Failed to update comment');
       throw error;
     }
   };
@@ -88,103 +117,158 @@ function PostDetail() {
     }
   };
 
+  const handleUpdatePost = async (formData) => {
+    try {
+      await updatePost(id, formData);
+      const updatedPost = await getPostById(id);
+      setPost(updatedPost);
+      setIsEditingPost(false);
+      toast.success('Post updated successfully');
+    } catch (error) {
+      console.error('Error updating post:', error);
+      toast.error('Failed to update post');
+      throw error;
+    }
+  };
+
+  // Function to extract username from the email or use display name
+  const getUserDisplayName = (userIdentifier) => {
+    if (!userIdentifier) return 'Anonymous';
+    
+    // If the user identifier is an email, extract the username part
+    if (userIdentifier.includes('@')) {
+      return userIdentifier.split('@')[0];
+    }
+    
+    return userIdentifier;
+  };
+
   if (loading) {
-    return <div className="text-center mt-8">Loading...</div>;
+    return <div className="text-center mt-8 text-white">Loading...</div>;
   }
 
   if (!post) {
-    return <div className="text-center mt-8">Post not found</div>;
+    return <div className="text-center mt-8 text-white">Post not found</div>;
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4">{post.title}</h2>
-      {post.imageUrl && (
-        <img src={post.imageUrl} alt={post.title} className="w-full h-64 object-cover rounded mb-4" />
-      )}
-      <p className="text-gray-700 mb-4">{post.content}</p>
-      <p className="text-gray-500 text-sm mb-2">
-        Posted by {post.userId} on {new Date(post.createdAt).toLocaleDateString()}
-      </p>
-      <div className="flex items-center mb-4">
-        <button
-          onClick={handleToggleLike}
-          className="flex items-center text-gray-600 hover:text-blue-500"
-        >
-          <svg
-            className="w-5 h-5 mr-1"
-            fill={post.liked ? 'currentColor' : 'none'}
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 bg-fixed text-white p-4">
+      <div className="w-full max-w-2xl bg-gray-800 bg-opacity-80 rounded-lg shadow-lg p-6">
+        {isEditingPost ? (
+          <div className="mt-6 bg-transparent rounded-lg p-4">
+            <h4 className="text-lg font-medium mb-2">Edit Post</h4>
+            <PostForm
+              postId={post.id}
+              onSubmit={handleUpdatePost}
+              initialData={{ title: post.title, content: post.content, imageUrl: post.imageUrl }}
+              isEditing={true}
             />
-          </svg>
-          {post.likeCount} Likes
-        </button>
-      </div>
-      {user && user.email === post.userId && (
-        <div className="flex space-x-4 mb-4">
-          <button
-            onClick={() => navigate(`/posts/edit/${id}`)}
-            className="text-blue-500 hover:underline"
-          >
-            Edit Post
-          </button>
-          <button
-            onClick={handleDeletePost}
-            className="text-red-500 hover:underline"
-          >
-            Delete Post
-          </button>
-        </div>
-      )}
-
-      <h3 className="text-xl font-semibold mt-6 mb-4">Comments</h3>
-      {comments.length === 0 ? (
-        <p className="text-gray-500">No comments yet.</p>
-      ) : (
-        <div className="space-y-4">
-          {comments.map((comment) => (
-            <div key={comment.id} className="border-t pt-4">
-              <p className="text-gray-700">{comment.content}</p>
-              <p className="text-gray-500 text-sm">
-                Commented by {comment.userId} on {new Date(comment.createdAt).toLocaleDateString()}
-              </p>
-              {user && user.email === comment.userId && (
-                <div className="flex space-x-4 mt-2">
-                  <button
-                    onClick={() => setEditingComment(comment)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteComment(comment.id)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
-              {editingComment?.id === comment.id && (
-                <CommentForm
-                  postId={post.id}
-                  onSubmit={handleUpdateComment}
-                  initialData={editingComment}
-                  isEditing={true}
+            <button
+              onClick={() => setIsEditingPost(false)}
+              className="mt-4 text-gray-300 hover:text-gray-400 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <>
+            <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
+            {post.imageUrl && (
+              <img src={post.imageUrl} alt={post.title} className="w-full h-64 object-cover rounded mb-4" />
+            )}
+            <p className="text-gray-300 mb-4">{post.content}</p>
+            <p className="text-gray-400 text-sm mb-2">
+              Posted by {getUserDisplayName(post.userId)} on {new Date(post.createdAt).toLocaleDateString()}
+            </p>
+            <div className="flex items-center space-x-4 mb-4">
+              <button
+                onClick={handleToggleLike}
+                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
+              >
+                <Heart 
+                  className="w-5 h-5 mr-1 text-pink-500" 
+                  fill={post.liked ? "currentColor" : "none"} 
                 />
-              )}
+                {post.likeCount} Likes
+              </button>
+              <button
+                onClick={() => setShowCommentForm(!showCommentForm)}
+                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
+              >
+                <MessageCircle className="w-5 h-5 mr-1 text-cyan-400" />
+                {comments.length} Comments
+              </button>
             </div>
-          ))}
-        </div>
-      )}
+            
+            {user && user.email === post.userId && (
+              <div className="flex space-x-4 mb-4">
+                <button
+                  onClick={() => setIsEditingPost(true)}
+                  className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  <Edit2 className="w-5 h-5 text-blue-400" />
+                </button>
+                <button
+                  onClick={handleDeletePost}
+                  className="flex items-center text-red-400 hover:text-red-300 transition-colors"
+                >
+                  <Trash className="w-5 h-5 text-red-400" />
+                </button>
+              </div>
+            )}
 
-      <CommentForm postId={post.id} onSubmit={handleCreateComment} />
+            {/* Add Comment Form */}
+            {showCommentForm && user && (
+              <div ref={commentFormRef} className="mt-4 mb-6">
+                <CommentForm 
+                  postId={post.id}
+                  onSubmit={handleCreateComment}
+                />
+              </div>
+            )}
+
+            <h3 className="text-2xl font-semibold mt-6 mb-4">Comments</h3>
+            {comments.length === 0 ? (
+              <p className="text-gray-400">No comments yet.</p>
+            ) : (
+              <div className="space-y-4">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="border-t border-gray-700 pt-4">
+                    <p className="text-gray-300">{comment.content}</p>
+                    <p className="text-gray-400 text-sm">
+                      Commented by {getUserDisplayName(comment.userId)} on {new Date(comment.createdAt).toLocaleDateString()}
+                    </p>
+                    {user && user.email === comment.userId && (
+                      <div className="flex space-x-4 mt-2">
+                        <button
+                          onClick={() => setEditingComment(comment)}
+                          className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                          <Edit2 className="w-4 h-4 text-blue-400" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="flex items-center text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          <Trash className="w-4 h-4 text-red-400" />
+                        </button>
+                      </div>
+                    )}
+                    {editingComment?.id === comment.id && (
+                      <CommentForm
+                        postId={post.id}
+                        onSubmit={(formData) => handleUpdateComment(formData, comment.id)}
+                        initialData={editingComment}
+                        isEditing={true}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
