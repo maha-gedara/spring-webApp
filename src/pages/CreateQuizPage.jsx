@@ -23,10 +23,6 @@ function CreateQuizPage() {
       <div className="absolute top-[-50px] right-[-50px] w-[300px] h-[300px] rounded-full bg-white/5 shadow-inner" />
       <div className="absolute bottom-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full bg-white/5 shadow-inner" />
       <div className="absolute top-[30%] right-[10%] w-[200px] h-[200px] rounded-full bg-white/5 shadow-inner" />
-
-      <h1 className="text-3xl font-bold text-purple-300 mb-8 text-center text-shadow-md relative z-10">
-        Create Your Quiz Experience
-      </h1>
       
       <div className="w-full max-w-4xl relative z-20">
         <QuizForm onSubmit={handleCreateQuiz} />

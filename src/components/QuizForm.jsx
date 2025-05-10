@@ -1,23 +1,27 @@
 import { useState, useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { AuthContext } from '../services/auth';
+import { AuthContext } from '../services/auth'; // Assuming you have AuthContext
 
 function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
+  const { user } = useContext(AuthContext);
+
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [time, setTime] = useState('');
   const [link, setLink] = useState('');
   const [loading, setLoading] = useState(false);
-  const { user } = useContext(AuthContext);
 
+  // Set initial values only on mount or when editing
   useEffect(() => {
-    setTitle(initialData.title || '');
-    setCategory(initialData.category || '');
-    setDescription(initialData.description || '');
-    setTime(initialData.time || '');
-    setLink(initialData.link || '');
-  }, [initialData]);
+    if (isEditing && initialData) {
+      setTitle(initialData.title || '');
+      setCategory(initialData.category || '');
+      setDescription(initialData.description || '');
+      setTime(initialData.time || '');
+      setLink(initialData.link || '');
+    }
+  }, [initialData, isEditing]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,10 +42,13 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
 
     setLoading(true);
     try {
+      // Call the onSubmit prop function (either create or update)
       await onSubmit(formData);
-      toast.success(isEditing ? 'Quiz updated!' : 'Quiz created!');
+      
+      toast.success(isEditing ? 'Quiz updated!' : '');
 
       if (!isEditing) {
+        // Reset form only if creating a new quiz
         setTitle('');
         setCategory('');
         setDescription('');
@@ -58,14 +65,19 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
 
   return (
     <div className="flex justify-center items-center box-border overflow-hidden">
-      <form onSubmit={handleSubmit} className="w-full max-w-3xl overflow-y-auto bg-white p-8 rounded-lg shadow-lg backdrop-blur-lg border border-white/20">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-3xl overflow-y-auto bg-white p-8 rounded-lg shadow-lg backdrop-blur-lg border border-white/20"
+      >
         <h2 className="text-3xl font-extrabold mb-4 bg-gradient-to-r from-pink-500 to-indigo-500 bg-clip-text text-transparent text-center">
           {isEditing ? 'Edit Quiz' : 'Create Quiz'}
         </h2>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="title" className="font-semibold text-sm mb-2 block">Title</label>
+            <label htmlFor="title" className="font-semibold text-sm mb-2 block">
+              Title
+            </label>
             <input
               type="text"
               id="title"
@@ -77,7 +89,9 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
             />
           </div>
           <div>
-            <label htmlFor="category" className="font-semibold text-sm mb-2 block">Category</label>
+            <label htmlFor="category" className="font-semibold text-sm mb-2 block">
+              Category
+            </label>
             <input
               type="text"
               id="category"
@@ -91,7 +105,9 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
         </div>
 
         <div>
-          <label htmlFor="description" className="font-semibold text-sm mb-2 block">Description</label>
+          <label htmlFor="description" className="font-semibold text-sm mb-2 block">
+            Description
+          </label>
           <textarea
             id="description"
             value={description}
@@ -104,7 +120,9 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="time" className="font-semibold text-sm mb-2 block">Time (minutes)</label>
+            <label htmlFor="time" className="font-semibold text-sm mb-2 block">
+              Time (minutes)
+            </label>
             <input
               type="number"
               id="time"
@@ -117,7 +135,9 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
             />
           </div>
           <div>
-            <label htmlFor="link" className="font-semibold text-sm mb-2 block">Quiz Link</label>
+            <label htmlFor="link" className="font-semibold text-sm mb-2 block">
+              Quiz Link
+            </label>
             <input
               type="url"
               id="link"
@@ -133,7 +153,9 @@ function QuizForm({ onSubmit, initialData = {}, isEditing = false, onCancel }) {
         <button
           type="submit"
           disabled={loading || !user}
-          className={`w-full py-3 rounded-lg font-semibold ${loading || !user ? 'bg-purple-200 cursor-not-allowed' : 'bg-purple-700 text-white'} mt-4`}
+          className={`w-full py-3 rounded-lg font-semibold ${
+            loading || !user ? 'bg-purple-200 cursor-not-allowed' : 'bg-purple-700 text-white'
+          } mt-4`}
         >
           {loading ? 'Processing...' : isEditing ? 'Update Quiz' : 'Create Quiz'}
         </button>

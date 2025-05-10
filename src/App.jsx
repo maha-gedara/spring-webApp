@@ -31,7 +31,7 @@ function App() {
             <Route path="/quizzes" element={<QuizHome />} />
             <Route path="/quizzes/:id" element={<QuizDetail />} />
             <Route path="/my-quizzes" element={<UserQuizzes />} />
-            <Route path="/quiz/create" element={<CreateQuizPage />} />
+            <Route path="/quizCreate" element={<CreateQuizPage />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/marketplace/:id" element={<AdDetail />} />
             <Route path="/my-ads" element={<UserAds />} />

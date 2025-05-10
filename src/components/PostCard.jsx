@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart, FaComment } from 'react-icons/fa';
 import { useEffect } from 'react';
 import { getCommentsByPostId } from '../services/api';
+import { useState} from 'react';
 
 function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
