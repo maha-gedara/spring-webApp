@@ -26,7 +26,7 @@ function App() {
             <Route path="/quizzes/:id" element={<QuizDetail />} />
             <Route path="/my-quizzes" element={<UserQuizzes />} />
             <Route path="/quizzes" element={<QuizHome />} />
-            <Route path="/quiz/create" element={<CreateQuizPage />} />
+            <Route path="/quizCreate" element={<CreateQuizPage />} />
           </Routes>
         </div>
       </AuthProvider>

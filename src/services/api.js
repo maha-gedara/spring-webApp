@@ -147,15 +147,27 @@ export const deleteComment = async (id) => {
   return response.json();
 };
 
+// Function to create a new quiz
 export const createQuiz = async (formData) => {
+  // Create a new FormData object for sending to the server
+  const form = new FormData();
+  
+  // Append all data fields to the FormData
+  Object.entries(formData).forEach(([key, value]) => {
+    form.append(key, value);
+  });
+
   const response = await fetch(`${API_URL}/quizzes`, {
     method: 'POST',
-    body: formData,
-    credentials: 'include',
+    body: form,
+    credentials: 'include', // Include cookies/session if needed
   });
+
   if (!response.ok) {
-    throw new Error('Failed to create quiz');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to create quiz');
   }
+
   return response.json();
 };
 

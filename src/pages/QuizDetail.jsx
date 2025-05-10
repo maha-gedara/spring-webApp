@@ -33,7 +33,7 @@ function QuizDetail() {
       try {
         await deleteQuiz(id);
         toast.success('Quiz deleted successfully');
-        navigate('/my-quizzes');
+        navigate('/quizzes');
       } catch (error) {
         console.error('Error deleting quiz:', error);
         toast.error('Failed to delete quiz');
@@ -43,13 +43,42 @@ function QuizDetail() {
 
   const handleUpdateQuiz = async (formData) => {
     try {
-      const updatedQuiz = await updateQuiz(id, formData);
+      // Check if formData is already a FormData object
+      let dataToSend;
+      
+      if (formData instanceof FormData) {
+        dataToSend = formData;
+        // Make sure the userId is included
+        if (!dataToSend.has('userId')) {
+          dataToSend.append('userId', quiz.userId);
+        }
+      } else {
+        // Create a new FormData object
+        dataToSend = new FormData();
+        
+        // Add all form fields to the FormData
+        Object.entries(formData).forEach(([key, value]) => {
+          dataToSend.append(key, value);
+        });
+        
+        // Ensure userId is included
+        if (!dataToSend.has('userId')) {
+          dataToSend.append('userId', quiz.userId);
+        }
+      }
+      
+      // Send the FormData to the API
+      const updatedQuiz = await updateQuiz(id, dataToSend);
+      
+      // Update local state with the response data
       setQuiz(updatedQuiz);
       setIsEditing(false);
-      toast.success('Quiz updated successfully');
+      
+      // Redirect to the quizzes page after successful update
+      navigate('/quizzes');
     } catch (error) {
       console.error('Error updating quiz:', error);
-      toast.error('Failed to update quiz');
+      toast.error(error.response?.data?.message || 'Failed to update quiz');
     }
   };
 
