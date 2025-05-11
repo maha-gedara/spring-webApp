@@ -52,18 +52,7 @@ function AdCard({ ad }) {
 
       {user && user.email === ad.userId && (
         <div className="flex space-x-4">
-          <button
-            onClick={() => navigate(`/marketplace/edit/${ad.id}`)}
-            className="bg-blue-600 text-white px-4 py-1 rounded-full hover:bg-blue-700 transition"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => navigate(`/marketplace/${ad.id}`)}
-            className="bg-red-600 text-white px-4 py-1 rounded-full hover:bg-red-700 transition"
-          >
-            Delete
-          </button>
+         
         </div>
       )}
     </div>
