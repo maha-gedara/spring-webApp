@@ -74,6 +74,19 @@ function Home() {
 
   const universeBackground = "bg-gradient-to-br from-gray-900 to-blue-900 bg-fixed";
   
+  // Modified Title component with blur effect
+  const TitleSection = ({ isBlurred = false }) => (
+    <div className="text-center mb-8">
+      <h1 className={`text-6xl font-bold text-white drop-shadow-lg ${isBlurred ? 'blur-md' : ''}`}>
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+          SkillVerse
+        </span>
+      </h1>
+      <p className={`mt-2 text-blue-100 text-xl dark:text-blue-200 ${isBlurred ? 'blur-sm' : ''}`}>
+        Build skills. Shape your future
+      </p>
+    </div>
+  );
 
   if (loading) {
     return (
@@ -103,44 +116,36 @@ function Home() {
           </button>
         </div>
 
-        {/* Page Header with Form Popup */}
-        <div className="text-center mb-8 relative">
-          <h1 className="text-6xl font-bold text-white drop-shadow-lg">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              SkillVerse
-            </span>
-          </h1>
-          <p className="mt-2 text-blue-100 text-xl dark:text-blue-200">
-            Build skills. Shape your future
-          </p>
+        {/* Page Header - With conditional blur effect */}
+        <TitleSection isBlurred={isFormOpen} />
 
-          {/* Create Post Form Popup - Centered with fixed position */}
-          {isFormOpen && (
-            <div className="absolute top-full left-0 right-0 z-50 mt-5 px-4 flex items-center justify-center">
-              {/* Semi-transparent overlay */}
-              <div className="fixed inset-0 bg-opacity-30" onClick={closeForm}></div>
+        {/* Create Post Form Popup - Fixed and centered on screen */}
+        {isFormOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 pt-12">
+            {/* Semi-transparent overlay */}
+            <div className="fixed inset-0 bg-opacity-50" onClick={closeForm}></div>
+            
+            {/* Form Content - Centered Popup */}
+            <div className="relative bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl p-6 w-full max-w-md shadow-2xl z-10 animate-popup border border-gray-700">
+              {/* Clear title in the form (no blur) */}
+              <TitleSection isBlurred={false} />
               
-              {/* Form Content - Centered Popup */}
-              <div className="relative bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl p-6 w-full max-w-md shadow-2xl z-10 animate-popup border border-gray-700">
-                <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-white">
-                    Create Post
-                  </h2>
-                  <button
-                    onClick={closeForm}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors"
-                    aria-label="Close form"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                <PostForm onSubmit={handleCreatePost} />
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-white">
+                  Create Post
+                </h2>
+                <button
+                  onClick={closeForm}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors font-bold text-xl"
+                  aria-label="Close form"
+                >
+                  ×
+                </button>
               </div>
+              <PostForm onSubmit={handleCreatePost} />
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Posts Section with Conditional Blur */}
         <div className={`transition-all duration-500 ${isFormOpen ? 'filter blur-sm' : ''}`}>
