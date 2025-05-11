@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/auth';
-import { toggleLike } from '../services/api';
+import { toggleLike, getCommentsByPostId } from '../services/api';
 import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart, FaComment } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
-import { getCommentsByPostId } from '../services/api';
+import { useEffect } from 'react';
 
 function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
@@ -73,7 +72,7 @@ function PostCard({ post, onUpdate }) {
         >
           <div className="transform transition-transform active:scale-125 duration-200">
             {post.liked ? (
-                              <FaHeart
+              <FaHeart
                 className="w-6 h-6 text-pink-500 fill-current transition-all duration-300 ease-in-out"
                 style={{ transform: isLiking ? 'scale(1.2)' : 'scale(1)', color: '#ec4899' }}
               />
